@@ -58,7 +58,7 @@ BBTag.Support.prototype.resetSupportAttributes = function() {
         this.supportStrings.push("BlackBerry OS 6.0+");
         this.supportTag = "bb6.0";
         this.supportTable = tableNo + "\n" + tableYes + "\n";
-	}else if(!this.bb50 && !this.bb60 && this.bb70){
+    }else if(!this.bb50 && !this.bb60 && this.bb70){
         this.supportStrings.push("BlackBerry OS 7.0+");
         this.supportTag = "bb7.0";
         this.supportTable = tableNo + "\n" + tableYes + "\n";
