@@ -32,6 +32,7 @@ BBTag.Support = function(symbolArray) {
 BBTag.Support.prototype.init = function() {
     this.bb50 = false;
     this.bb60 = false;
+	this.bb70 = false;
     this.pb10 = false;
     this.common = false;
     this.resetSupportAttributes();
@@ -44,18 +45,22 @@ BBTag.Support.prototype.resetSupportAttributes = function() {
     var tableYes = "<td class=\"apiTd apiYes\">Y</td>";
     var tableNo = "<td class=\"apiTd apiNo\">&nbsp;</td>";
     
-    if(this.bb50 && this.bb60){
+    if(this.bb50 && this.bb60 && this.bb70){
         this.supportStrings.push("BlackBerry OS 5.0+");
-        this.supportTag = "bb5.0|bb6.0";
+        this.supportTag = "bb5.0|bb6.0|bb7.0";
         this.supportTable = tableYes + "\n" + tableYes + "\n";
         
-    }else if(this.bb50 && !this.bb60){
+    }else if(this.bb50 && !this.bb60 && !this.bb70){
         this.supportStrings.push("BlackBerry OS 5.0");
         this.supportTag = "bb5.0";
         this.supportTable = tableYes + "\n" + tableNo + "\n";
-    }else if(!this.bb50 && this.bb60){
+    }else if(!this.bb50 && this.bb60 && !this.bb70){
         this.supportStrings.push("BlackBerry OS 6.0+");
         this.supportTag = "bb6.0";
+        this.supportTable = tableNo + "\n" + tableYes + "\n";
+	}else if(!this.bb50 && !this.bb60 && this.bb70){
+        this.supportStrings.push("BlackBerry OS 7.0+");
+        this.supportTag = "bb7.0";
         this.supportTable = tableNo + "\n" + tableYes + "\n";
     } else {// This last else has no support
         this.supportTable = tableNo + "\n" + tableNo + "\n";
@@ -77,11 +82,12 @@ BBTag.Support.prototype.resetSupportAttributes = function() {
     }
 }
 
-BBTag.Support.prototype.populateByBools = function(bb50, bb60, pb10) {
+BBTag.Support.prototype.populateByBools = function(bb50, bb60, bb70, pb10) {
     this.bb50 |= bb50;
     this.bb60 |= bb60;
+	this.bb70 |= bb70;
     this.pb10 |= pb10;
-    this.common |= bb50 && bb60 && pb10;
+    this.common |= bb50 && bb60 && bb70 && pb10;
     this.resetSupportAttributes();
 };
 
@@ -95,12 +101,14 @@ BBTag.Support.prototype.populateBySymbol = function(symbol) {
             var BB50P = symbol.comment.getTag("BB50+").length;
             var BB60 = symbol.comment.getTag("BB60").length;
             var BB60P = symbol.comment.getTag("BB60+").length;
+			var BB70 = symbol.comment.getTag("BB70").length;
+            var BB70P = symbol.comment.getTag("BB70+").length;
             var PB10 = symbol.comment.getTag("PB10").length;
             var PB10P = symbol.comment.getTag("PB10+").length;
 
             symbol.support = new BBTag.Support();
             symbol.support.populateByBools((BB50 || BB50P),
-                    (BB50P || BB60P || BB60), (PB10 || PB10P));
+                    (BB50P || BB60P || BB60), (BB50P || BB70P || BB70), (PB10 || PB10P));
             this.populateBySupport(symbol.support);
         }
     }
@@ -113,11 +121,13 @@ BBTag.Support.prototype.populateByString = function(string) {
         var BB50P = string.equals("BB50+");
         var BB60 = string.equals("BB60");
         var BB60P = string.equals("BB60+");
+		var BB70 = string.equals("BB70");
+        var BB70P = string.equals("BB70+");
         var PB10 = string.equals("PB10");
         var PB10P = string.equals("PB10+");
 
         this.populateByBools((BB50 || BB50P),
-                (BB50P || BB60P || BB60), (PB10 || PB10P));
+                (BB50P || BB60P || BB60), (BB50P || BB70P || BB70), (PB10 || PB10P));
     }
 };
 
@@ -125,6 +135,7 @@ BBTag.Support.prototype.populateBySupport = function(support) {
 
     this.bb50 |= support.bb50;
     this.bb60 |= support.bb60;
+	this.bb70 |= support.bb70;
     this.pb10 |= support.pb10;
     this.common |= support.common;
     this.resetSupportAttributes();
